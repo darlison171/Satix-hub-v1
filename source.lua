@@ -1,42 +1,27 @@
--- Satix Hub com mais de 100 funções
-local screen = Instance.new("ScreenGui")
-screen.Name = "SatixHub"
-screen.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-screen.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-screen.DisplayOrder = 1
+-- Satix Hub com mais de 100 funções.
+-- Satix Hub - UI estilo Redz Hub (Rayfield Library)
 
--- Funções básicas de UI
-local frame = Instance.new("Frame")
-frame.Parent = screen
-frame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-frame.Size = UDim2.new(0, 300, 0, 800)
-frame.Position = UDim2.new(0.5, -150, 0.5, -200)
+local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source'))()
 
-local title = Instance.new("TextLabel")
-title.Parent = frame
-title.Text = "Satix Hub"
-title.Size = UDim2.new(1, 0, 0, 50)
-title.TextColor3 = Color3.fromRGB(255, 255, 255)
-title.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-title.TextSize = 24
-title.TextAlign = Enum.TextXAlignment.Center
-title.TextYAlignment = Enum.TextYAlignment.Center
+local Window = Rayfield:CreateWindow({ Name = "Satix Hub | Blox Fruits", LoadingTitle = "Satix Hub", LoadingSubtitle = "by Darlison", ConfigurationSaving = { Enabled = true, FolderName = "SatixHub", FileName = "Settings" }, Discord = { Enabled = true, Invite = "hubscripts", -- Substitua pelo seu convite real RememberJoins = true }, KeySystem = false -- Sem Key System como solicitado })
 
--- Funções com múltiplas opções (Auto-Masteries, Raças, Eventos, etc.)
-local function createButton(text, position, callback)
-    local button = Instance.new("TextButton")
-    button.Parent = frame
-    button.Text = text
-    button.Size = UDim2.new(0, 280, 0, 50)
-    button.Position = position
-    button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    button.TextColor3 = Color3.fromRGB(255, 255, 255)
-    button.TextSize = 18
+-- Abas principais local FarmTab = Window:CreateTab("Auto Farm", 4483362458) local PlayerTab = Window:CreateTab("Player", 4483362458) local TeleportTab = Window:CreateTab("Teleport", 4483362458) local BossTab = Window:CreateTab("Bosses", 4483362458) local RaidTab = Window:CreateTab("Raids", 4483362458) local EventTab = Window:CreateTab("Eventos", 4483362458) local SettingsTab = Window:CreateTab("Config", 4483362458)
 
-    button.MouseButton1Click:Connect(callback)
-    return button
-end
+-- Auto Farm FarmTab:CreateToggle({ Name = "Auto Farm Mobs", CurrentValue = false, Flag = "AutoFarmMobs", Callback = function(Value) getgenv().AutoFarmMobs = Value end, })
 
+FarmTab:CreateToggle({ Name = "Auto Quest", CurrentValue = false, Flag = "AutoQuest", Callback = function(Value) getgenv().AutoQuest = Value end, })
+
+FarmTab:CreateDropdown({ Name = "Modo de Ataque", Options = {"Melee", "Sword", "Blox Fruit"}, CurrentOption = "Melee", Flag = "AttackMode", Callback = function(Option) getgenv().AttackMode = Option end, })
+
+-- Teleport TeleportTab:CreateDropdown({ Name = "Teleport para Ilhas", Options = {"Inicio", "Hydra Island", "Cake Island", "Great Tree"}, CurrentOption = "Inicio", Callback = function(Option) local CFrames = { ["Inicio"] = CFrame.new(0, 10, 0), ["Hydra Island"] = CFrame.new(5229, 25, -2373), ["Cake Island"] = CFrame.new(-1653, 75, -12000), ["Great Tree"] = CFrame.new(2300, 50, -6000) } game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrames[Option] or CFrame.new(0, 10, 0) end, })
+
+-- Player PlayerTab:CreateSlider({ Name = "Velocidade do Player", Range = {16, 200}, Increment = 1, CurrentValue = 16, Flag = "WalkSpeed", Callback = function(Value) game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value end, })
+
+PlayerTab:CreateSlider({ Name = "Altura do Pulo", Range = {50, 300}, Increment = 10, CurrentValue = 50, Flag = "JumpPower", Callback = function(Value) game.Players.LocalPlayer.Character.Humanoid.JumpPower = Value end, })
+
+-- Configurações SettingsTab:CreateButton({ Name = "Rejoin Server", Callback = function() game:GetService("TeleportService"):Teleport(game.PlaceId, game.Players.LocalPlayer) end, })
+
+SettingsTab:CreateButton({ Name = "Copy Discord do Satix Hub", Callback = function() setclipboard("https://discord.gg/hubscripts") Rayfield:Notify({Title = "Satix Hub", Content = "Link copiado!", Duration = 3}) end, })
 -- Auto Farm e Habilidades
 createButton("Auto Mastery - Sword", UDim2.new(0, 10, 0, 60), function()
     -- Código para Auto Mastery de Sword
