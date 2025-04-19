@@ -160,3 +160,134 @@ end)
 createButton("Fechar", UDim2.new(0, 10, 0, 1440), function()
     screen:Destroy()
 end)
+-- Função para criar um botão na UI
+function createButton(name, position, callback)
+    local button = Instance.new("TextButton")
+    button.Size = UDim2.new(0, 200, 0, 50)
+    button.Position = position
+    button.Text = name
+    button.Parent = game.Players.LocalPlayer.PlayerGui.ScreenGui
+    button.MouseButton1Click:Connect(callback)
+end
+
+-- 1. Auto Defeat Enemies (Mobs)
+createButton("Auto Defeat Mobs", UDim2.new(0, 10, 0, 1440), function()
+    -- Código para derrotar automaticamente os mobs
+    print("Auto Defeat Mobs Ativado!")
+end)
+
+-- 2. Auto Skill Leveling
+createButton("Auto Skill Leveling - Sword", UDim2.new(0, 10, 0, 1500), function()
+    -- Código para subir o nível da habilidade de espada automaticamente
+    print("Auto Skill Leveling - Sword Ativado!")
+end)
+
+-- 3. Auto Quest Completion
+createButton("Auto Quest Completion", UDim2.new(0, 10, 0, 1560), function()
+    -- Código para completar missões automaticamente
+    print("Auto Quest Completion Ativado!")
+end)
+
+-- 4. Auto Teleport to Event (Fog Event, Sea Event, etc.)
+createButton("Auto Teleport to Sea Event", UDim2.new(0, 10, 0, 1620), function()
+    -- Código para teleportar automaticamente para eventos do mar
+    print("Auto Teleport to Sea Event Ativado!")
+end)
+
+-- 5. Auto Boss Killing
+createButton("Auto Boss Killing", UDim2.new(0, 10, 0, 1680), function()
+    -- Código para derrotar bosses automaticamente
+    print("Auto Boss Killing Ativado!")
+end)
+
+-- 6. Auto Raid Completion
+createButton("Auto Raid Completion", UDim2.new(0, 10, 0, 1740), function()
+    -- Código para completar raids automaticamente
+    print("Auto Raid Completion Ativado!")
+end)
+
+-- 7. Auto Heal (Medic)
+createButton("Auto Heal", UDim2.new(0, 10, 0, 1800), function()
+    -- Código para usar itens de cura automaticamente
+    print("Auto Heal Ativado!")
+end)
+
+-- 8. Auto Sell Items
+createButton("Auto Sell Items", UDim2.new(0, 10, 0, 1860), function()
+    -- Código para vender itens automaticamente
+    print("Auto Sell Items Ativado!")
+end)
+
+-- 9. Auto Unlock All Areas
+createButton("Auto Unlock All Areas", UDim2.new(0, 10, 0, 1920), function()
+    -- Código para desbloquear todas as áreas
+    print("Auto Unlock All Areas Ativado!")
+end)
+
+-- 10. Auto Crafting
+createButton("Auto Crafting", UDim2.new(0, 10, 0, 1980), function()
+    -- Código para crafting automático
+    print("Auto Crafting Ativado!")
+end)
+
+-- 11. Auto Collect Fruits
+createButton("Auto Collect Fruits", UDim2.new(0, 10, 0, 2040), function()
+    -- Código para coletar frutas automaticamente
+    print("Auto Collect Fruits Ativado!")
+end)
+
+-- 12. Auto Teleport to Sea Beast
+createButton("Auto Teleport to Sea Beast", UDim2.new(0, 10, 0, 2100), function()
+    -- Código para teleportar automaticamente para o Sea Beast
+    print("Auto Teleport to Sea Beast Ativado!")
+end)
+
+-- 13. Auto Upgrade Fruits
+createButton("Auto Upgrade Fruits", UDim2.new(0, 10, 0, 2160), function()
+    -- Código para fazer upgrade das frutas automaticamente
+    print("Auto Upgrade Fruits Ativado!")
+end)
+
+-- 14. Auto PvP (Auto Fight Other Players)
+createButton("Auto PvP", UDim2.new(0, 10, 0, 2220), function()
+    -- Código para ativar automaticamente o PvP
+    print("Auto PvP Ativado!")
+end)
+
+-- 15. Auto Teleport to Trial Port
+createButton("Auto Teleport to Trial Port", UDim2.new(0, 10, 0, 2280), function()
+    -- Código para teleportar para a porta do Trial
+    print("Auto Teleport to Trial Port Ativado!")
+end)
+
+-- Funcionalidades Específicas:
+
+-- Auto Pull Lever (Mecanismo de Triggers)
+createButton("Auto Pull Lever", UDim2.new(0, 10, 0, 2340), function()
+    -- Código para puxar alavancas automaticamente
+    print("Auto Pull Lever Ativado!")
+end)
+
+-- Auto Unlock Haki
+createButton("Auto Unlock Haki", UDim2.new(0, 10, 0, 2400), function()
+    -- Código para desbloquear automaticamente Haki de Armamento, Observação, etc.
+    print("Auto Unlock Haki Ativado!")
+end)
+
+-- Auto Mastery (Armas e Frutas)
+createButton("Auto Mastery", UDim2.new(0, 10, 0, 2460), function()
+    -- Código para aumentar habilidades das armas ou frutas
+    print("Auto Mastery Ativado!")
+end)
+
+-- Auto Trainer
+createButton("Auto Trainer", UDim2.new(0, 10, 0, 2520), function()
+    -- Código para treinar habilidades ou stats automaticamente
+    print("Auto Trainer Ativado!")
+end)
+
+-- Auto Raids e Eventos
+createButton("Auto Raids and Events", UDim2.new(0, 10, 0, 2580), function()
+    -- Código para participar e completar eventos automaticamente
+    print("Auto Raids and Events Ativado!")
+end)
