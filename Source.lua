@@ -1,1285 +1,912 @@
--- Satix Hub v1.0 | By Darlison
--- Script sem key, com várias funções automáticas para Blox Fruits
+--[[ 
+███████╗ █████╗ ████████╗██╗██╗  ██╗    ██╗  ██╗██╗   ██╗██████╗ 
+██╔════╝██╔══██╗╚══██╔══╝██║██║ ██╔╝    ██║  ██║██║   ██║██╔══██╗
+███████╗███████║   ██║   ██║█████╔╝     ███████║██║   ██║██████╔╝
+╚════██║██╔══██║   ██║   ██║██╔═██╗     ██╔══██║██║   ██║██╔═══╝ 
+███████║██║  ██║   ██║   ██║██║  ██╗    ██║  ██║╚██████╔╝██║     
+╚══════╝╚═╝  ╚═╝   ╚═╝   ╚═╝╚═╝  ╚═╝    ╚═╝  ╚═╝ ╚═════╝ ╚═╝     
+]]--
 
--- Interface básica
-local ScreenGui = Instance.new("ScreenGui")
-local Frame = Instance.new("Frame")
-local UIListLayout = Instance.new("UIListLayout")
-local buttons = {}
+-- Satix Hub - Versão Completa | Estilo UI: Redz Hub Dark Mode
+-- Feito para uso em Mobile e PC
 
-ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-ScreenGui.Name = "SatixHubUI"
-Frame.Parent = ScreenGui
-Frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-Frame.Position = UDim2.new(0.05, 0, 0.1, 0)
-Frame.Size = UDim2.new(0, 250, 0, 500)
-Frame.Name = "MainFrame"
+repeat wait() until game:IsLoaded()
+local Satix = {}
+local player = game.Players.LocalPlayer
+local runService = game:GetService("RunService")
 
-UIListLayout.Parent = Frame
-UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+-- Biblioteca da UI estilo Redz
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xshvi/free/main/RedzUILib"))()
+local Window = Library:Window("Satix Hub", "Versão Mobile e PC", Color3.fromRGB(64,64,64), Enum.KeyCode.RightControl)
 
--- Função para criar botões
-function createButton(text, callback)
-    local button = Instance.new("TextButton")
-    button.Parent = Frame
-    button.Size = UDim2.new(1, -10, 0, 30)
-    button.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    button.TextColor3 = Color3.fromRGB(255, 255, 255)
-    button.Font = Enum.Font.SourceSansBold
-    button.TextSize = 18
-    button.Text = text
-    button.MouseButton1Click:Connect(callback)
-    table.insert(buttons, button)
-end
+-- Aba Principal
+local MainTab = Window:Tab("Auto Farm", "rbxassetid://6023426923")
 
--- Exemplo de funções (iremos expandir depois)
-createButton("Auto Farm Mobs", function()
-    print("Auto Farm Mobs Ativado")
-end)
-
-createButton("Auto Boss", function()
-    print("Auto Boss Ativado")
-end)
-
-createButton("Auto Coletar Frutas", function()
-    print("Auto Coleta de Frutas Ativado")
-end)
--- SATIX HUB - Funções principais
-
--- Auto Farm Mobs
-createButton("Auto Farm Mobs", UDim2.new(0, 10, 0, 140), function()
-    _G.AutoFarmMobs = not _G.AutoFarmMobs
-    while _G.AutoFarmMobs do
+MainTab:Toggle("Auto Farm Mobs",false,function(state)
+    Satix.AutoFarm = state
+    while Satix.AutoFarm and task.wait() do
         pcall(function()
-            local Enemy = FindNearestMob()
-            if Enemy then
+            -- Exemplo de Farm simples (completa nas próximas partes)
+            local mob = workspace.Enemies:FindFirstChild("Bandit [Lv. 5]")
+            if mob and mob:FindFirstChild("HumanoidRootPart") then
                 repeat
-                    wait()
-                    AttackMob(Enemy)
-                until not Enemy or Enemy.Humanoid.Health <= 0 or not _G.AutoFarmMobs
+                    player.Character.HumanoidRootPart.CFrame = mob.HumanoidRootPart.CFrame * CFrame.new(0,10,0)
+                    game:GetService("VirtualInputManager"):SendKeyEvent(true, "Z", false, game)
+                    task.wait(0.1)
+                until not mob.Parent or mob.Humanoid.Health <= 0 or not Satix.AutoFarm
             end
         end)
-        wait(0.5)
     end
 end)
 
--- Auto Quest
-createButton("Auto Quest", UDim2.new(0, 10, 0, 200), function()
-    _G.AutoQuest = not _G.AutoQuest
-    while _G.AutoQuest do
+MainTab:Toggle("Auto Quest",false,function(state)
+    Satix.AutoQuest = state
+    while Satix.AutoQuest and task.wait(1) do
         pcall(function()
-            if CanTakeQuest() then
-                TakeQuest()
+            -- Aceita missão automaticamente (exemplo inicial)
+            if game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("Quest") == nil then
+                local args = {
+                    [1] = "StartQuest",
+                    [2] = "BanditQuest1",
+                    [3] = 1
+                }
+                game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
             end
         end)
-        wait(1)
     end
 end)
 
--- Auto Mastery (Espada)
-createButton("Auto Mastery Sword", UDim2.new(0, 10, 0, 260), function()
-    _G.AutoMasterySword = not _G.AutoMasterySword
-    while _G.AutoMasterySword do
+MainTab:Toggle("Auto Farm Mastery",false,function(state)
+    Satix.AutoMastery = state
+    -- função completa nas próximas partes
+end)
+
+MainTab:Dropdown("Método de Ataque",{"Melee","Sword","Fruit"},function(selected)
+    Satix.ModoAtaque = selected
+end)
+
+-- Outras abas vêm a seguir (PvP, Bosses, Teleporte, Raças, Eventos...)
+
+-- SATIX HUB - PARTE 2 (continuação)
+
+-- Aba PvP
+local PvPTab = Window:Tab("Auto PvP", "rbxassetid://6031075931")
+
+PvPTab:Toggle("Auto PvP (Mobile)", false, function(state)
+    Satix.AutoPvPMobile = state
+    while Satix.AutoPvPMobile and task.wait() do
         pcall(function()
-            EquipWeapon("Sword")
-            AttackNearbyMobs()
-        end)
-        wait(0.5)
-    end
-end)
-
--- Auto Mastery (Fruta)
-createButton("Auto Mastery Fruit", UDim2.new(0, 10, 0, 320), function()
-    _G.AutoMasteryFruit = not _G.AutoMasteryFruit
-    while _G.AutoMasteryFruit do
-        pcall(function()
-            EquipWeapon("Blox Fruit")
-            AttackNearbyMobs()
-        end)
-        wait(0.5)
-    end
-end)
-
--- Auto Haki (Observação e Armamento)
-createButton("Auto Activate Haki", UDim2.new(0, 10, 0, 380), function()
-    game:GetService("VirtualInputManager"):SendKeyEvent(true, "J", false, game)
-    game:GetService("VirtualInputManager"):SendKeyEvent(true, "H", false, game)
-end)
-
--- Auto Teleport para Ilha
-createButton("Auto TP Ilha", UDim2.new(0, 10, 0, 440), function()
-    TeleportToIsland("StartIsland") -- Substitua com a ilha desejada
-end)
-
--- Auto PVP
-createButton("Auto PVP", UDim2.new(0, 10, 0, 500), function()
-    _G.AutoPVP = not _G.AutoPVP
-    while _G.AutoPVP do
-        pcall(function()
-            local Target = FindClosestPlayer()
-            if Target then AttackPlayer(Target) end
-        end)
-        wait(0.5)
-    end
-end)
-
--- Auto Indra
-createButton("Auto Rip Indra", UDim2.new(0, 10, 0, 560), function()
-    _G.AutoIndra = not _G.AutoIndra
-    while _G.AutoIndra do
-        pcall(function()
-            if BossAlive("rip_indra") then
-                TeleportToBoss("rip_indra")
-                AttackBoss("rip_indra")
-            else
-                HopToNextServer()
+            for _,v in pairs(game.Players:GetPlayers()) do
+                if v ~= player and v.Team ~= player.Team and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                    player.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0, 2, 0)
+                    game:GetService("VirtualInputManager"):SendKeyEvent(true, "Z", false, game)
+                    task.wait(0.1)
+                end
             end
         end)
-        wait(2)
     end
 end)
 
--- Auto Katakuri V2
-createButton("Auto Katakuri V2", UDim2.new(0, 10, 0, 620), function()
-    _G.AutoKataV2 = not _G.AutoKataV2
-    while _G.AutoKataV2 do
-        pcall(function()
-            if BossAlive("charlotte_katakuri") then
-                TeleportToBoss("charlotte_katakuri")
-                AttackBoss("charlotte_katakuri")
-            else
-                HopToNextServer()
+PvPTab:Toggle("Auto PvP (PC)", false, function(state)
+    Satix.AutoPvPPC = state
+    -- versão com mouseclick virá na Parte 3
+end)
+
+-- Aba Teleporte
+local TP = Window:Tab("Teleportes", "rbxassetid://6035193502")
+
+TP:Button("TP para Ilha Inicial", function()
+    player.Character.HumanoidRootPart.CFrame = CFrame.new(109, 18, 1110)
+end)
+
+TP:Button("TP para Trial Atual", function()
+    if workspace:FindFirstChild("TrialDoor") then
+        player.Character.HumanoidRootPart.CFrame = workspace.TrialDoor.CFrame
+    end
+end)
+
+TP:Button("TP Lever V4", function()
+    if workspace:FindFirstChild("Lever") then
+        player.Character.HumanoidRootPart.CFrame = workspace.Lever.CFrame + Vector3.new(0, 5, 0)
+    end
+end)
+
+-- Aba Bosses
+local BossTab = Window:Tab("Bosses/Eventos", "rbxassetid://6034981504")
+
+BossTab:Toggle("Auto Rip Indra", false, function(state)
+    Satix.AutoIndra = state
+    while Satix.AutoIndra and task.wait(2) do
+        local indra = workspace.Enemies:FindFirstChild("rip_indra True Form")
+        if indra and indra:FindFirstChild("HumanoidRootPart") then
+            player.Character.HumanoidRootPart.CFrame = indra.HumanoidRootPart.CFrame * CFrame.new(0,10,0)
+        end
+    end
+end)
+
+BossTab:Toggle("Auto Katakuri V2", false, function(state)
+    Satix.AutoKata = state
+    while Satix.AutoKata and task.wait(2) do
+        local kata = workspace.Enemies:FindFirstChild("Charlotte Katakuri [Raid Boss]")
+        if kata and kata:FindFirstChild("HumanoidRootPart") -- Parte 3: Auto Race, Haki, Observation V1, V2, V3, V4
+Satix.AutoRaceV1 = true
+Satix.AutoRaceV2 = true
+Satix.AutoRaceV3 = true
+Satix.AutoRaceV4 = true
+Satix.AutoActivateHaki = true
+Satix.AutoObservationV1 = true
+
+spawn(function()
+    while task.wait(3) do
+        if Satix.AutoActivateHaki then
+            ReplicatedStorage.Remotes.CommF_:InvokeServer("Buso")
+        end
+        if Satix.AutoObservationV1 then
+            ReplicatedStorage.Remotes.CommF_:InvokeServer("Ken")
+        end
+        if Satix.AutoRaceV1 then
+            ReplicatedStorage.Remotes.CommF_:InvokeServer("BuyRace", "Human")
+        end
+        if Satix.AutoRaceV2 then
+            ReplicatedStorage.Remotes.CommF_:InvokeServer("UnlockRaceV2")
+        end
+        if Satix.AutoRaceV3 then
+            ReplicatedStorage.Remotes.CommF_:InvokeServer("UnlockRaceV3")
+        end
+        if Satix.AutoRaceV4 then
+            ReplicatedStorage.Remotes.CommF_:InvokeServer("AwakenRace")
+        end
+    end
+end)
+
+-- Parte 4: Auto Sabre, Auto Coletar Ovo, Auto Coletar Osso
+Satix.AutoSabre = true
+Satix.AutoSaberDoor = true
+Satix.AutoColetarOvo = true
+Satix.AutoColetarOsso = true
+
+spawn(function()
+    while task.wait(5) do
+        if Satix.AutoSabre then
+            ReplicatedStorage.Remotes.CommF_:InvokeServer("StartQuest", "Saber Expert")
+        end
+        if Satix.AutoSaberDoor and workspace:FindFirstChild("SaberDoor") then
+            fireclickdetector(workspace.SaberDoor.ClickDetector)
+        end
+        if Satix.AutoColetarOvo then
+            for _,v in pairs(workspace:GetDescendants()) do
+                if v.Name == "Egg" and v:IsA("Model") then
+                    teleportTo(v:GetModelCFrame())
+                end
             end
-        end)
-        wait(2)
+        end
+        if Satix.AutoColetarOsso then
+            ReplicatedStorage.Remotes.CommF_:InvokeServer("Bones", "Buy")
+        end
     end
 end)
 
--- Auto Sea Event
-createButton("Auto Sea Event", UDim2.new(0, 10, 0, 680), function()
-    _G.AutoSeaEvent = not _G.AutoSeaEvent
-    while _G.AutoSeaEvent do
-        pcall(function()
-            local Event = FindSeaEvent()
-            if Event then
-                TeleportToEvent(Event)
+-- Parte 5: Auto Craft Dino Rood
+Satix.AutoCraftDino = true
+
+spawn(function()
+    while Satix.AutoCraftDino and task.wait(10) do
+        ReplicatedStorage.Remotes.CommF_:InvokeServer("DinoFood", "Craft")
+    end
+end)
+
+-- Parte 6: Auto Eventos Marítimos
+Satix.AutoSeaEvents = true
+
+spawn(function()
+    while Satix.AutoSeaEvents and task.wait(1) do
+        local beast = getEnemy("Sea Beast")
+        if beast then
+            teleportTo(beast.HumanoidRootPart.CFrame * CFrame.new(0,10,0))
+        end
+    end
+end)
+
+-- Parte 7: Auto Treinar Desvio (Observation XP)
+Satix.AutoTreinarDesvios = true
+
+spawn(function()
+    while Satix.AutoTreinarDesvios and task.wait(1) do
+        useKey("E")
+    end
+end)
+
+-- Parte 8: Auto Enchant Itens
+Satix.AutoEnchant = true
+
+spawn(function()
+    while Satix.AutoEnchant and task.wait(5) do
+        ReplicatedStorage.Remotes.CommF_:InvokeServer("Blacksmith", "Enchant")
+    end
+end)
+
+-- Parte 9: Auto Maestria (Espada e Fruta)
+Satix.AutoMasterySword = true
+Satix.AutoMasteryFruit = true
+
+spawn(function()
+    while task.wait(1) do
+        if Satix.AutoMasterySword or Satix.AutoMasteryFruit then
+            for _,enemy in pairs(workspace.Enemies:GetChildren()) do
+                if enemy:FindFirstChild("HumanoidRootPart") and enemy:FindFirstChild("Humanoid") and enemy.Humanoid.Health > 0 then
+                    teleportTo(enemy.HumanoidRootPart.CFrame * CFrame.new(0,10,0))
+                    if Satix.AutoMasterySword then
+                        useKey("Z") -- ataque espada
+                    elseif Satix.AutoMasteryFruit then
+                        useKey("X") -- ataque fruta
+                    end
+                end
             end
-        end)
-        wait(3)
+        end
     end
 end)
 
--- Auto Pull Lever
-createButton("Auto Pull Lever", UDim2.new(0, 10, 0, 740), function()
-    PullTrialLever()
-end)
+-- Parte 10: Auto Compra de Estilos e Missões
+Satix.AutoBuyHaki = true
+Satix.AutoBuyEstilo = true
+Satix.AutoMissaoEstilo = true
 
--- Auto Trial V4
-createButton("Auto Ativar Trial V4", UDim2.new(0, 10, 0, 800), function()
-    _G.AutoTrial = not _G.AutoTrial
-    while _G.AutoTrial do
-        AtivarTrialV4()
-        wait(5)
+spawn(function()
+    while task.wait(10) do
+        if Satix.AutoBuyHaki then
+            ReplicatedStorage.Remotes.CommF_:InvokeServer("BuyHaki")
+        end
+        if Satix.AutoBuyEstilo then
+            ReplicatedStorage.Remotes.CommF_:InvokeServer("BuyFightingStyle", "Electric")
+        end
+        if Satix.AutoMissaoEstilo then
+            ReplicatedStorage.Remotes.CommF_:InvokeServer("StartQuest", "ElectricClaw")
+        end
     end
 end)
 
--- Auto Craft Dino Rood
-createButton("Auto Craft Dino Rood", UDim2.new(0, 10, 0, 860), function()
-    CraftItem("Dino Rood")
-end)
+-- Parte 11: Auto Dungeon, Arena PvP, Factory, Totem, Fish Quest
+Satix.AutoDungeon = true
+Satix.AutoArenaPvP = true
+Satix.AutoFactory = true
+Satix.AutoTotem = true
+Satix.AutoFishQuest = true
 
--- Auto Coleta de Osso e Ovo
-createButton("Auto Coleta Osso e Ovo", UDim2.new(0, 10, 0, 920), function()
-    ColetarItem("Bone")
-    ColetarItem("Egg")
-end)
-
--- Auto Sabre
-createButton("Auto Sabre", UDim2.new(0, 10, 0, 980), function()
-    AtivarSabreAuto()
-end)
-
--- Auto Unlock Haki
-createButton("Auto Haki V1", UDim2.new(0, 10, 0, 1040), function()
-    DesbloquearHaki("Observation")
-    DesbloquearHaki("Armament")
-end)
-
--- Auto Treinar Desvio
-createButton("Auto Treinar Desvio", UDim2.new(0, 10, 0, 1100), function()
-    TreinarDesvios()
-end)
-
--- Auto Treinar Raça
-createButton("Auto Treinar Raça", UDim2.new(0, 10, 0, 1160), function()
-    TreinarRaca()
-end)
-
--- Auto Arena PvP
-createButton("Auto Arena PvP", UDim2.new(0, 10, 0, 1220), function()
-    ParticiparArena()
-end)
-
--- Auto Dragon Talon V2
-createButton("Auto Dragon Talon V2", UDim2.new(0, 10, 0, 1280), function()
-    DesbloquearDragonTalonV2()
-end)
--- Auto Tushita
-createButton("Auto Tushita", UDim2.new(0, 10, 0, 1340), function()
-    _G.AutoTushita = not _G.AutoTushita
-    while _G.AutoTushita do
-        FarmTushita()
-        wait(2)
+spawn(function()
+    while task.wait(15) do
+        if Satix.AutoDungeon then
+            ReplicatedStorage.Remotes.CommF_:InvokeServer("StartDungeon")
+        end
+        if Satix.AutoArenaPvP then
+            ReplicatedStorage.Remotes.CommF_:InvokeServer("JoinArena")
+        end
+        if Satix.AutoFactory then
+            ReplicatedStorage.Remotes.CommF_:InvokeServer("StartFactoryRaid")
+        end
+        if Satix.AutoTotem then
+            ReplicatedStorage.Remotes.CommF_:InvokeServer("ActivateTotem")
+        end
+        if Satix.AutoFishQuest then
+            ReplicatedStorage.Remotes.CommF_:InvokeServer("StartFishQuest")
+        end
     end
 end)
 
--- Auto Yama
-createButton("Auto Yama", UDim2.new(0, 10, 0, 1400), function()
-    _G.AutoYama = not _G.AutoYama
-    while _G.AutoYama do
-        FarmYama()
-        wait(2)
+-- Parte 12: Auto Dragon Talon V2, No Fog, Speed Hack
+Satix.AutoDragonTalonV2 = true
+Satix.AutoNoFog = true
+Satix.AutoSpeedHack = true
+
+spawn(function()
+    while task.wait(1) do
+        if Satix.AutoDragonTalonV2 then
+            ReplicatedStorage.Remotes.CommF_:InvokeServer("StartDragonTalonV2")
+        end
+        if Satix.AutoNoFog then
+            game.Lighting.FogEnd = math.huge
+        end
+        if Satix.AutoSpeedHack then
+            game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 200
+        end
     end
 end)
 
--- Auto Holy Torch
-createButton("Auto Holy Torch", UDim2.new(0, 10, 0, 1460), function()
-    ColetarHolyTorch()
-end)
+-- Parte 13: Auto Stats, ESP, Teleport com Preview
+Satix.AutoStats = true
+Satix.AutoESP = true
+Satix.AutoTeleportPreview = true
 
--- Auto Rengoku
-createButton("Auto Rengoku", UDim2.new(0, 10, 0, 1520), function()
-    FarmarRengoku()
-end)
-
--- Auto CDK
-createButton("Auto CDK", UDim2.new(0, 10, 0, 1580), function()
-    FarmarCDK()
-end)
-
--- Auto Soul Guitar
-createButton("Auto Soul Guitar", UDim2.new(0, 10, 0, 1640), function()
-    FarmarSoulGuitar()
-end)
-
--- Auto God Human
-createButton("Auto God Human", UDim2.new(0, 10, 0, 1700), function()
-    FarmarGodHuman()
-end)
-
--- Auto Superhuman
-createButton("Auto Superhuman", UDim2.new(0, 10, 0, 1760), function()
-    FarmarSuperhuman()
-end)
-
--- Auto Death Step
-createButton("Auto Death Step", UDim2.new(0, 10, 0, 1820), function()
-    FarmarDeathStep()
-end)
-
--- Auto Electric Claw
-createButton("Auto Electric Claw", UDim2.new(0, 10, 0, 1880), function()
-    FarmarElectricClaw()
-end)
-
--- Auto Sharkman Karate
-createButton("Auto Sharkman Karate", UDim2.new(0, 10, 0, 1940), function()
-    FarmarSharkmanKarate()
-end)
-
--- Auto Dragon Claw
-createButton("Auto Dragon Claw", UDim2.new(0, 10, 0, 2000), function()
-    FarmarDragonClaw()
-end)
-
--- Auto Enchant Itens
-createButton("Auto Enchant Itens", UDim2.new(0, 10, 0, 2060), function()
-    EnchantarItens()
-end)
-
--- Auto God Chalice
-createButton("Auto God Chalice", UDim2.new(0, 10, 0, 2120), function()
-    ColetarGodChalice()
-end)
-
--- Auto Elite Hunter
-createButton("Auto Elite Hunter", UDim2.new(0, 10, 0, 2180), function()
-    FarmarEliteHunter()
-end)
-
--- Auto Mirage Island
-createButton("Auto Mirage Island", UDim2.new(0, 10, 0, 2240), function()
-    ProcurarMirageIsland()
-end)
-
--- Auto Usoap Island
-createButton("Auto Usoap Island", UDim2.new(0, 10, 0, 2300), function()
-    IrParaUsoppIsland()
-end)
-
--- Auto Peças da CDK
-createButton("Auto Coletar Totem CDK", UDim2.new(0, 10, 0, 2360), function()
-    ColetarTotemCDK()
-end)
-
--- Auto Haki V2 (Observation)
-createButton("Auto Observation V2", UDim2.new(0, 10, 0, 2420), function()
-    DesbloquearObservationV2()
-end)
-
--- Auto Boss Tracker
-createButton("Auto Boss Tracker", UDim2.new(0, 10, 0, 2480), function()
-    _G.AutoBossTracker = not _G.AutoBossTracker
-    while _G.AutoBossTracker do
-        VerificarBosses()
-        wait(3)
-    end
-end)
--- Auto Arena PvP
-createButton("Auto Arena PvP", UDim2.new(0, 10, 0, 2540), function()
-    EntrarArenaPvP()
-end)
-
--- Auto Factory Raid
-createButton("Auto Factory", UDim2.new(0, 10, 0, 2600), function()
-    _G.FactoryAuto = not _G.FactoryAuto
-    while _G.FactoryAuto do
-        AtacarFactory()
-        wait(1)
+spawn(function()
+    while task.wait(3) do
+        if Satix.AutoStats then
+            ReplicatedStorage.Remotes.CommF_:InvokeServer("AutoStats")
+        end
+        if Satix.AutoESP then
+            -- Exibir objetos e players no mapa
+            for _,v in pairs(workspace:GetChildren()) do
+                if v:IsA("Model") and v:FindFirstChild("HumanoidRootPart") then
+                    -- Código de ESP
+                end
+            end
+        end
+        if Satix.AutoTeleportPreview then
+            -- Código para preview de teleport
+        end
     end
 end)
 
--- Auto Fruit Sniper
-createButton("Auto Fruit Sniper", UDim2.new(0, 10, 0, 2660), function()
-    AtivarFruitSniper()
-end)
-
--- Auto Fruits na Shop
-createButton("Comprar Frutas da Loja", UDim2.new(0, 10, 0, 2720), function()
-    ComprarFrutasLoja()
-end)
-
--- Auto Notification Webhook
-createButton("Notificar via Webhook", UDim2.new(0, 10, 0, 2780), function()
-    EnviarWebhookFrutas()
-end)
-
--- Auto Farm Seabeast
-createButton("Auto Sea Beast", UDim2.new(0, 10, 0, 2840), function()
-    _G.AutoSeaBeast = not _G.AutoSeaBeast
-    while _G.AutoSeaBeast do
-        FarmarSeaBeast()
-        wait(3)
+-- Mais funções serão adicionadas nas próximas partes!then
+            player.Character.HumanoidRootPart.CFrame = kata.HumanoidRootPart.CFrame * CFrame.new(0,10,0)
+        end
     end
 end)
 
--- Auto Fish Quest
-createButton("Auto Fish Quest", UDim2.new(0, 10, 0, 2900), function()
-    FarmarFishQuest()
+BossTab:Toggle("Auto Summon Indra", false, function(state)
+    if state then
+        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SummonIndra")
+    end
+end)
+
+BossTab:Toggle("Auto Pull Lever", false, function(state)
+    if state and workspace:FindFirstChild("Lever") then
+        fireclickdetector(workspace.Lever.ClickDetector)
+    end
+end)
+
+-- Parte 14: Auto Raids, Bosses e Sea Events
+Satix.AutoRaids = true
+Satix.AutoBosses = true
+Satix.AutoSeaEvent = true
+
+spawn(function()
+    while task.wait(5) do
+        if Satix.AutoRaids then
+            ReplicatedStorage.Remotes.CommF_:InvokeServer("StartRaid")
+        end
+        if Satix.AutoBosses then
+            local bosses = {"KatakuriV2", "RipIndra", "SeaBeast", "FactoryRaidBoss"}
+            for _, boss in pairs(bosses) do
+                if workspace:FindFirstChild(boss) then
+                    teleportTo(workspace[boss].HumanoidRootPart.CFrame)
+                end
+            end
+        end
+        if Satix.AutoSeaEvent then
+            local seaEvent = workspace:FindFirstChild("SeaEvent")
+            if seaEvent then
+                teleportTo(seaEvent.CFrame)
+            end
+        end
+    end
+end)
+
+-- Parte 15: Auto PvP, Auto Bounty, Auto Farm Mastery
+Satix.AutoPvP = true
+Satix.AutoBounty = true
+Satix.AutoFarmMastery = true
+
+spawn(function()
+    while task.wait(2) do
+        if Satix.AutoPvP then
+            ReplicatedStorage.Remotes.CommF_:InvokeServer("PvP")
+        end
+        if Satix.AutoBounty then
+            ReplicatedStorage.Remotes.CommF_:InvokeServer("StartBounty")
+        end
+        if Satix.AutoFarmMastery then
+            ReplicatedStorage.Remotes.CommF_:InvokeServer("FarmMastery")
+        end
+    end
+end)
+
+-- Parte 16: Auto Teleport para Ilhas
+Satix.AutoTeleportIlhas = true
+
+spawn(function()
+    while Satix.AutoTeleportIlhas do
+        for _, ilha in pairs(workspace:GetChildren()) do
+            if ilha.Name == "Island" then
+                teleportTo(ilha.CFrame)
+                task.wait(5) -- Intervalo entre os teleportes
+            end
+        end
+    end
+end)
+
+-- Parte 17: Auto Haki do Armamento, Auto Haki da Observação
+Satix.AutoBusoHaki = true
+Satix.AutoKenHaki = true
+
+spawn(function()
+    while task.wait(1) do
+        if Satix.AutoBusoHaki then
+            ReplicatedStorage.Remotes.CommF_:InvokeServer("Buso")
+        end
+        if Satix.AutoKenHaki then
+            ReplicatedStorage.Remotes.CommF_:InvokeServer("Ken")
+        end
+    end
+end)
+
+-- Parte 18: Auto Matar Mobs com Escolha de Estilo (Espada, Click da Fruta, Estilo de Luta)
+Satix.AutoMatarMobs = true
+Satix.EspecificarEstiloDeLuta = "Espada" -- Pode ser "Espada", "Fruta", ou "Estilo de Luta"
+
+spawn(function()
+    while task.wait(1) do
+        if Satix.AutoMatarMobs then
+            for _, mob in pairs(workspace.Mobs:GetChildren()) do
+                if mob:FindFirstChild("HumanoidRootPart") then
+                    teleportTo(mob.HumanoidRootPart.CFrame)
+                    if Satix.EspecificarEstiloDeLuta == "Espada" then
+                        useKey("Z")
+                    elseif Satix.EspecificarEstiloDeLuta == "Fruta" then
+                        useKey("X")
+                    elseif Satix.EspecificarEstiloDeLuta == "Estilo de Luta" then
+                        useKey("C")
+                    end
+                end
+            end
+        end
+    end
+end)
+
+-- Parte 19: Auto Dojo Hunter e Trainer
+Satix.AutoDojoHunter = true
+Satix.AutoDojoTrainer = true
+
+spawn(function()
+    while task.wait(5) do
+        if Satix.AutoDojoHunter then
+            ReplicatedStorage.Remotes.CommF_:InvokeServer("StartDojoHunter")
+        end
+        if Satix.AutoDojoTrainer then
+            ReplicatedStorage.Remotes.CommF_:InvokeServer("StartDojoTrainer")
+        end
+    end
+end)
+
+-- Parte 20: Auto Factory Raid
+Satix.AutoFactoryRaid = true
+
+spawn(function()
+    while Satix.AutoFactoryRaid and task.wait(10) do
+        ReplicatedStorage.Remotes.CommF_:InvokeServer("StartFactoryRaid")
+    end
 end)
-
--- Auto Dragon Talon V2
-createButton("Auto Dragon Talon V2", UDim2.new(0, 10, 0, 2960), function()
-    FarmarDragonTalonV2()
-end)
-
--- Auto Trial V4
-createButton("Auto Trial V4", UDim2.new(0, 10, 0, 3020), function()
-    IniciarTrialV4()
-end)
-
--- Auto Race Awakening
-createButton("Auto Race V4", UDim2.new(0, 10, 0, 3080), function()
-    DespertarRacaV4()
-end)
-
--- Auto Chip Verde
-createButton("Auto Chip Verde", UDim2.new(0, 10, 0, 3140), function()
-    ColetarChipVerde()
-end)
-
--- Auto Chips & Trials
-createButton("Auto Trials + Chips", UDim2.new(0, 10, 0, 3200), function()
-    FarmarChipsETrials()
-end)
-
--- Auto Portal Lab
-createButton("Auto Portal Lab", UDim2.new(0, 10, 0, 3260), function()
-    AcessarLaboratorio()
-end)
-
--- Auto Buffs
-createButton("Auto Buffs", UDim2.new(0, 10, 0, 3320), function()
-    AtivarBuffs()
-end)
-
--- Auto Long Sword
-createButton("Auto Long Sword", UDim2.new(0, 10, 0, 3380), function()
-    FarmarLongSword()
-end)
-
--- Auto Twin Hooks
-createButton("Auto Twin Hooks", UDim2.new(0, 10, 0, 3440), function()
-    FarmarTwinHooks()
-end)
-
--- Auto Buddy Sword
-createButton("Auto Buddy Sword", UDim2.new(0, 10, 0, 3500), function()
-    FarmarBuddySword()
-end)
-
--- Auto Cursed Dual Katana Upgrade
-createButton("Auto Upgrade CDK", UDim2.new(0, 10, 0, 3560), function()
-    UpgradeCDK()
-end)
-
--- Auto Haoshoku
-createButton("Auto Haoshoku", UDim2.new(0, 10, 0, 3620), function()
-    ObterHaoshoku()
-end)
-
--- Auto Observation ESP
-createButton("Auto Observation ESP", UDim2.new(0, 10, 0, 3680), function()
-    AtivarESPObservation()
-end)
-
--- Auto Rainbow Haki
-createButton("Auto Rainbow Haki", UDim2.new(0, 10, 0, 3740), function()
-    AtivarRainbowHaki()
-end)
-
--- Auto Rainbow Aura
-createButton("Auto Rainbow Aura", UDim2.new(0, 10, 0, 3800), function()
-    AtivarAura()
-end)
-
--- Auto Colors
-createButton("Auto Unlock Colors", UDim2.new(0, 10, 0, 3860), function()
-    DesbloquearCores()
-end)
-
--- Auto Flame Vortex
-createButton("Auto Flame Vortex", UDim2.new(0, 10, 0, 3920), function()
-    ColetarFlameVortex()
-end)
-
--- Auto Cursed Ship Key
-createButton("Auto Cursed Key", UDim2.new(0, 10, 0, 3980), function()
-    ColetarCursedShipKey()
-end)
-
--- Auto Holy Crown
-createButton("Auto Holy Crown", UDim2.new(0, 10, 0, 4040), function()
-    ColetarHolyCrown()
-end)
-
--- Auto Musketeer Hat
-createButton("Auto Musketeer Hat", UDim2.new(0, 10, 0, 4100), function()
-    ColetarMusketeerHat()
-end)
-
--- Auto Leviathan Raid
-createButton("Auto Leviathan", UDim2.new(0, 10, 0, 4160), function()
-    FarmarLeviathan()
-end)
-
--- Auto Haki V2
-createButton("Despertar Haki V2", UDim2.new(0, 10, 0, 4220), function()
-    AtivarHakiV2()
-end)
-
--- Auto Island Teleports
-createButton("Teleports Rápidos", UDim2.new(0, 10, 0, 4280), function()
-    AbrirMenuIlhas()
-end)
-
--- Auto Espada Secreta
-createButton("Auto Espada Secreta", UDim2.new(0, 10, 0, 4340), function()
-    FarmarEspadaSecreta()
-end)
-
--- Auto Espadas Lendárias
-createButton("Auto Espadas Lendárias", UDim2.new(0, 10, 0, 4400), function()
-    FarmarLendarias()
-end)
-
--- Auto God Mode
-createButton("Ativar God Mode", UDim2.new(0, 10, 0, 4460), function()
-    AtivarGodMode()
-end)
-
--- Auto Cura
-createButton("Auto Cura", UDim2.new(0, 10, 0, 4520), function()
-    AtivarAutoCura()
-end)
-
--- Auto Dash Infinito
-createButton("Dash Infinito", UDim2.new(0, 10, 0, 4580), function()
-    AtivarDashInfinito()
-end)
-
--- Auto Teleport com Preview
-createButton("Teleport Preview", UDim2.new(0, 10, 0, 4640), function()
-    AtivarTeleportPreview()
-end)
-
--- Auto Detector de Ilhas
-createButton("Detector de Ilhas", UDim2.new(0, 10, 0, 4700), function()
-    AtivarDetectorIlhas()
-end)
-
--- Auto Ilhas Aleatórias
-createButton("Ir para Ilha Aleatória", UDim2.new(0, 10, 0, 4760), function()
-    TeleportIlhaAleatoria()
-end)
-
--- Auto All Bosses
-createButton("Farm Todos Bosses", UDim2.new(0, 10, 0, 4820), function()
-    FarmarTodosBosses()
-end)
-
--- Auto Espada Mythical
-createButton("Auto Mythic Sword", UDim2.new(0, 10, 0, 4880), function()
-    FarmarMythicalSword()
-end)
-
--- Auto Itens Secretos
-createButton("Auto Itens Secretos", UDim2.new(0, 10, 0, 4940), function()
-    ColetarItensSecretos()
-end)
-
--- Auto Evento de Natal
-createButton("Farm Evento Natal", UDim2.new(0, 10, 0, 5000), function()
-    FarmarEventoNatal()
-end)
-
--- Auto Evento de Halloween
-createButton("Farm Evento Halloween", UDim2.new(0, 10, 0, 5060), function()
-    FarmarEventoHalloween()
-end)
-
--- Auto Evento de Páscoa
-createButton("Farm Evento Páscoa", UDim2.new(0, 10, 0, 5120), function()
-    FarmarEventoPascoa()
-end)
-
--- Auto Evento de Ano Novo
-createButton("Farm Ano Novo", UDim2.new(0, 10, 0, 5180), function()
-    FarmarEventoAnoNovo()
-end)
-
--- Auto Presentes
-createButton("Coletar Presentes", UDim2.new(0, 10, 0, 5240), function()
-    ColetarPresentes()
-end)
-
--- Auto Caça ao Tesouro
-createButton("Auto Tesouro", UDim2.new(0, 10, 0, 5300), function()
-    CaçarTesouro()
-end)
--- Auto Puzzle Indra
-createButton("Auto Puzzle Indra", UDim2.new(0, 10, 0, 5360), function()
-    ResolverPuzzleIndra()
-end)
-
--- Auto Kill Indra
-createButton("Auto Kill Indra", UDim2.new(0, 10, 0, 5420), function()
-    MatarIndra()
-end)
-
--- Auto Light Raid
-createButton("Auto Light Raid", UDim2.new(0, 10, 0, 5480), function()
-    IniciarLightRaid()
-end)
-
--- Auto Dark Raid
-createButton("Auto Dark Raid", UDim2.new(0, 10, 0, 5540), function()
-    IniciarDarkRaid()
-end)
-
--- Auto Electric Claw
-createButton("Auto Electric Claw", UDim2.new(0, 10, 0, 5600), function()
-    DesbloquearElectricClaw()
-end)
-
--- Auto Superhuman
-createButton("Auto Superhuman", UDim2.new(0, 10, 0, 5660), function()
-    DesbloquearSuperhuman()
-end)
-
--- Auto Death Step
-createButton("Auto Death Step", UDim2.new(0, 10, 0, 5720), function()
-    DesbloquearDeathStep()
-end)
-
--- Auto Sharkman Karate
-createButton("Auto Sharkman Karate", UDim2.new(0, 10, 0, 5780), function()
-    DesbloquearSharkmanKarate()
-end)
-
--- Auto Dragon Breath
-createButton("Auto Dragon Breath", UDim2.new(0, 10, 0, 5840), function()
-    DesbloquearDragonBreath()
-end)
-
--- Auto Water Kung Fu
-createButton("Auto Water Kung Fu", UDim2.new(0, 10, 0, 5900), function()
-    DesbloquearWaterKungFu()
-end)
-
--- Auto Black Leg
-createButton("Auto Black Leg", UDim2.new(0, 10, 0, 5960), function()
-    DesbloquearBlackLeg()
-end)
-
--- Auto God Human V2
-createButton("Auto God Human V2", UDim2.new(0, 10, 0, 6020), function()
-    DesbloquearGodHumanV2()
-end)
-
--- Auto Yama Puzzle
-createButton("Auto Yama Puzzle", UDim2.new(0, 10, 0, 6080), function()
-    ResolverPuzzleYama()
-end)
-
--- Auto Tushita Puzzle
-createButton("Auto Tushita Puzzle", UDim2.new(0, 10, 0, 6140), function()
-    ResolverPuzzleTushita()
-end)
-
--- Auto God Chalice
-createButton("Auto God Chalice", UDim2.new(0, 10, 0, 6200), function()
-    ColetarGodChalice()
-end)
-
--- Auto Saber V2
-createButton("Auto Saber V2", UDim2.new(0, 10, 0, 6260), function()
-    DesbloquearSaberV2()
-end)
-
--- Auto Midnight Blade
-createButton("Auto Midnight Blade", UDim2.new(0, 10, 0, 6320), function()
-    DesbloquearMidnightBlade()
-end)
-
--- Auto Pole V2
-createButton("Auto Pole V2", UDim2.new(0, 10, 0, 6380), function()
-    DesbloquearPoleV2()
-end)
-
--- Auto True Triple Katana
-createButton("Auto TT Katana", UDim2.new(0, 10, 0, 6440), function()
-    DesbloquearTrueTripleKatana()
-end)
-
--- Auto Holy Torch
-createButton("Auto Holy Torch", UDim2.new(0, 10, 0, 6500), function()
-    ColetarHolyTorch()
-end)
-
--- Auto Leviathan Eye
-createButton("Auto Leviathan Eye", UDim2.new(0, 10, 0, 6560), function()
-    ColetarLeviathanEye()
-end)
-
--- Auto Mirror Fractal
-createButton("Auto Mirror Fractal", UDim2.new(0, 10, 0, 6620), function()
-    ColetarMirrorFractal()
-end)
-
--- Auto Rainbow Savior
-createButton("Auto Rainbow Savior", UDim2.new(0, 10, 0, 6680), function()
-    ColetarRainbowSavior()
-end)
-
--- Auto Soul Guitar Puzzle
-createButton("Puzzle Soul Guitar", UDim2.new(0, 10, 0, 6740), function()
-    ResolverPuzzleSoulGuitar()
-end)
-
--- Auto Enchant Equip
-createButton("Auto Enchant", UDim2.new(0, 10, 0, 6800), function()
-    EncantarEquipamentos()
-end)
-
--- Auto World Event
-createButton("Auto Eventos Mundo", UDim2.new(0, 10, 0, 6860), function()
-    MonitorarEventosMundo()
-end)
-
--- Auto Fruits Radar
-createButton("Radar Frutas", UDim2.new(0, 10, 0, 6920), function()
-    AtivarRadarFrutas()
-end)
-
--- Auto PVP Mobile
-createButton("PvP Mobile", UDim2.new(0, 10, 0, 6980), function()
-    AtivarPvPMobile()
-end)
-
--- Auto PVP PC
-createButton("PvP PC", UDim2.new(0, 10, 0, 7040), function()
-    AtivarPvPPC()
-end)
-
--- Auto Server Check
-createButton("Verificação Servidor", UDim2.new(0, 10, 0, 7100), function()
-    ChecarServidor()
-end)
-
--- Auto Despertar Fruta
-createButton("Despertar Fruta", UDim2.new(0, 10, 0, 7160), function()
-    DespertarMinhaFruta()
-end)
-
--- Auto Safe Mode
-createButton("Modo Seguro", UDim2.new(0, 10, 0, 7220), function()
-    AtivarModoSeguro()
-end)
-
--- Auto Log Cleaner
-createButton("Limpar Logs", UDim2.new(0, 10, 0, 7280), function()
-    LimparLog()
-end)
-
--- Auto FPS Boost
-createButton("Boost FPS", UDim2.new(0, 10, 0, 7340), function()
-    AtivarBoostFPS()
-end)
-
--- Auto Remover Neblina
-createButton("Remover Neblina", UDim2.new(0, 10, 0, 7400), function()
-    DesativarNeblina()
-end)
-
--- Auto Visual Boost
-createButton("Boost Visual", UDim2.new(0, 10, 0, 7460), function()
-    AtivarVisualBoost()
-end)
-
--- Auto Config PC/Mobile
-createButton("Detectar PC/Celular", UDim2.new(0, 10, 0, 7520), function()
-    DetectarDispositivo()
-end)
-
--- Auto Interface Personalizada
-createButton("Tema Customizado", UDim2.new(0, 10, 0, 7580), function()
-    TrocarTemaUI()
-end)
-
--- Auto Scan Frutas Global
-createButton("Scan Frutas Global", UDim2.new(0, 10, 0, 7640), function()
-    EscanearTodasFrutas()
-end)
-
--- Auto Avisos de Boss
-createButton("Avisar Bosses", UDim2.new(0, 10, 0, 7700), function()
-    AvisarBosses()
-end)
-
--- Auto Status Boss
-createButton("Status Bosses", UDim2.new(0, 10, 0, 7760), function()
-    MonitorarBossStatus()
-end)
-
--- Auto Eventos Semanais
-createButton("Eventos Semanais", UDim2.new(0, 10, 0, 7820), function()
-    FarmarEventosSemanais()
-end)
-
--- Auto Trial Teleport
-createButton("Auto Teleport Trial", UDim2.new(0, 10, 0, 7880), function()
-    TeleportarTrial()
-end)
-
--- Auto Fish NPC
-createButton("Auto Fish NPC", UDim2.new(0, 10, 0, 7940), function()
-    InteragirFishNPC()
-end)
-
--- Auto Buff do NPC
-createButton("Buff com NPC", UDim2.new(0, 10, 0, 8000), function()
-    AtivarBuffNPC()
-end)
--- Auto Coletar Moedas Trials
-createButton("Coletar Moedas Trials", UDim2.new(0, 10, 0, 8060), function()
-    ColetarMoedasTrials()
-end)
-
--- Auto Recompensas Diárias
-createButton("Recompensa Diária", UDim2.new(0, 10, 0, 8120), function()
-    ColetarRecompensaDiaria()
-end)
-
--- Auto Skip Cutscenes
-createButton("Pular Cutscenes", UDim2.new(0, 10, 0, 8180), function()
-    PularCutscenes()
-end)
-
--- Auto Transformação V4
-createButton("Transformar V4", UDim2.new(0, 10, 0, 8240), function()
-    AtivarTransformacaoV4()
-end)
-
--- Auto Equipar Melhor Arma
-createButton("Melhor Arma", UDim2.new(0, 10, 0, 8300), function()
-    EquiparMelhorArma()
-end)
-
--- Auto Equipar Melhor Fruta
-createButton("Melhor Fruta", UDim2.new(0, 10, 0, 8360), function()
-    EquiparMelhorFruta()
-end)
-
--- Auto Salvamento de Progressos
-createButton("Salvar Progresso", UDim2.new(0, 10, 0, 8420), function()
-    SalvarProgressoScript()
-end)
-
--- Auto Chat Custom
-createButton("Chat Custom", UDim2.new(0, 10, 0, 8480), function()
-    AtivarChatCustom()
-end)
-
--- Auto Lock Player PvP
-createButton("PvP Lock Player", UDim2.new(0, 10, 0, 8540), function()
-    TravarEmPlayerPvP()
-end)
-
--- Auto PvP Arena V2
-createButton("PvP Arena V2", UDim2.new(0, 10, 0, 8600), function()
-    AtivarPvPArenaV2()
-end)
-
--- Auto Buff Raid Boss
-createButton("Buff Raid Boss", UDim2.new(0, 10, 0, 8660), function()
-    AtivarBuffRaidBoss()
-end)
-
--- Auto Script Backup
-createButton("Backup Script", UDim2.new(0, 10, 0, 8720), function()
-    FazerBackupScript()
-end)
-
--- Auto Destravar Skins
-createButton("Destravar Skins", UDim2.new(0, 10, 0, 8780), function()
-    DestravarTodasSkins()
-end)
-
--- Auto Nuke Hacker
-createButton("Anti Hacker", UDim2.new(0, 10, 0, 8840), function()
-    NukeHacker()
-end)
-
--- Auto Avoid Player Stronger
-createButton("Evitar Player Forte", UDim2.new(0, 10, 0, 8900), function()
-    EvitarPlayersFortes()
-end)
-
--- Auto Notificador Discord (sem webhook)
-createButton("Notificador Discord", UDim2.new(0, 10, 0, 8960), function()
-    NotificarViaDiscord()
-end)
-
--- Auto Prevenir Ban
-createButton("Prevenir Ban", UDim2.new(0, 10, 0, 9020), function()
-    SistemaPrevenirBan()
-end)
-
--- Auto Skin Bosses
-createButton("Skins Bosses", UDim2.new(0, 10, 0, 9080), function()
-    FarmarSkinsBoss()
-end)
-
--- Auto Farm Materiais
-createButton("Farm Materiais", UDim2.new(0, 10, 0, 9140), function()
-    FarmarMateriais()
-end)
-
--- Auto Setar FPS
-createButton("Setar FPS", UDim2.new(0, 10, 0, 9200), function()
-    SetarLimiteFPS()
-end)
-
--- Auto Otimizar Interface
-createButton("Otimizar Interface", UDim2.new(0, 10, 0, 9260), function()
-    OtimizarHUD()
-end)
-
--- Auto Invisível
-createButton("Ficar Invisível", UDim2.new(0, 10, 0, 9320), function()
-    TornarInvisivel()
-end)
-
--- Auto Speed Dash
-createButton("Dash Rápido", UDim2.new(0, 10, 0, 9380), function()
-    AtivarDashRapido()
-end)
-
--- Auto Salvamento Manual
-createButton("Salvar Script Manual", UDim2.new(0, 10, 0, 9440), function()
-    SalvarManual()
-end)
-
--- Auto Config Interface
-createButton("Configs UI", UDim2.new(0, 10, 0, 9500), function()
-    AbrirConfigUI()
-end)
-
--- Auto Simulador Interações
-createButton("Simular Jogador", UDim2.new(0, 10, 0, 9560), function()
-    SimularComportamentoJogador()
-end)
-
--- Auto Câmera Estável
-createButton("Fixar Câmera", UDim2.new(0, 10, 0, 9620), function()
-    CorrigirCamera()
-end)
-
--- Auto Close AntiAFK
-createButton("Anti AFK", UDim2.new(0, 10, 0, 9680), function()
-    AtivarAntiAFK()
-end)
-
--- Auto Teleport Bosses
-createButton("Teleport Bosses", UDim2.new(0, 10, 0, 9740), function()
-    TeleportarParaBoss()
-end)
-
--- Auto Crystal Fragments
-createButton("Crystal Fragment", UDim2.new(0, 10, 0, 9800), function()
-    FarmarCrystalFragments()
-end)
-
--- Auto Equip Top Armas
-createButton("Auto Equip TOP", UDim2.new(0, 10, 0, 9860), function()
-    EquiparTopArmas()
-end)
-
--- Auto Missões Arena
-createButton("Missão Arena", UDim2.new(0, 10, 0, 9920), function()
-    IniciarMissaoArena()
-end)
-
--- Auto Reset Teleport
-createButton("Reset + TP", UDim2.new(0, 10, 0, 9980), function()
-    ResetarETeleportar()
-end)
-
--- Auto Estabilidade Script
-createButton("Estabilidade Script", UDim2.new(0, 10, 0, 10040), function()
-    EstabilizarExecucao()
-end)
-
--- Auto Reset Fruta
-createButton("Reset Fruta", UDim2.new(0, 10, 0, 10100), function()
-    ResetarFruta()
-end)
-
--- Auto Delay Seguro
-createButton("Delay Seguro", UDim2.new(0, 10, 0, 10160), function()
-    AtivarDelaySeguro()
-end)
-
--- Auto Título Raro
-createButton("Coletar Título Raro", UDim2.new(0, 10, 0, 10220), function()
-    ObterTitulosRaros()
-end)
-
--- Auto Pular Diálogos
-createButton("Pular Diálogo", UDim2.new(0, 10, 0, 10280), function()
-    PularDialogos()
-end)
-
--- Auto Modo Noturno
-createButton("Modo Noturno", UDim2.new(0, 10, 0, 10340), function()
-    AtivarModoNoturno()
-end)
-
--- Auto Reset UI
-createButton("Resetar UI", UDim2.new(0, 10, 0, 10400), function()
-    ResetarInterface()
-end)
-
--- Auto Drop Items Ruins
-createButton("Drop Itens Ruins", UDim2.new(0, 10, 0, 10460), function()
-    DroparItensRuins()
-end)
-
--- Auto Organizador Inventário
-createButton("Organizar Inventário", UDim2.new(0, 10, 0, 10520), function()
-    OrganizarInventario()
-end)
-
--- Auto Build Final
-createButton("Build Final", UDim2.new(0, 10, 0, 10580), function()
-    AtivarBuildFinal()
-end)
-
--- Auto Config Segura
-createButton("Config Segura", UDim2.new(0, 10, 0, 10640), function()
-    ConfiguracaoSegura()
-end)
-
--- Auto Notificação Celular
-createButton("Notificação Mobile", UDim2.new(0, 10, 0, 10700), function()
-    NotificarCelular()
-end)
-
--- Auto Salvar Layout
-createButton("Salvar Layout", UDim2.new(0, 10, 0, 10760), function()
-    SalvarLayoutInterface()
-end)
-
--- Auto FPS Dinâmico
-createButton("FPS Dinâmico", UDim2.new(0, 10, 0, 10820), function()
-    AjustarFPSDinamico()
-end)
-
--- Auto Painel Informativo
-createButton("Painel Info", UDim2.new(0, 10, 0, 10880), function()
-    ExibirPainelInformativo()
-end)
--- Continuando com as funções do Satix Hub (201 a 250)
-
--- Auto Trocar Aura
-createButton("Trocar Aura", UDim2.new(0, 10, 0, 10880), function()
-    TrocarAura()
-end)
-
--- Auto Farm Chips
-createButton("Farm Chips", UDim2.new(0, 10, 0, 10940), function()
-    FarmarChips()
-end)
-
--- Auto Config Gráficos
-createButton("Configurar Gráficos", UDim2.new(0, 10, 0, 11000), function()
-    ConfigurarGraficos()
-end)
-
--- Auto Minimizar UI
-createButton("Minimizar UI", UDim2.new(0, 10, 0, 11060), function()
-    MinimizarInterface()
-end)
-
--- Auto Maximizar UI
-createButton("Maximizar UI", UDim2.new(0, 10, 0, 11120), function()
-    MaximizarInterface()
-end)
-
--- Auto Custom Skins
-createButton("Skins Custom", UDim2.new(0, 10, 0, 11180), function()
-    AplicarSkinsCustom()
-end)
-
--- Auto Gerar Nick
-createButton("Gerar Nick", UDim2.new(0, 10, 0, 11240), function()
-    GerarNickRP()
-end)
-
--- Auto Login Automático
-createButton("Auto Login", UDim2.new(0, 10, 0, 11300), function()
-    LoginAutomatico()
+
+-- Parte 21: Auto Missão de Estilo de Luta - Electric Claw
+Satix.AutoMissaoEstiloLuta = "ElectricClaw"
+
+spawn(function()
+    while Satix.AutoMissaoEstiloLuta do
+        ReplicatedStorage.Remotes.CommF_:InvokeServer("StartQuest", Satix.AutoMissaoEstiloLuta)
+        task.wait(30) -- Intervalo para nova missão
+    end
+end)
+
+-- Parte 22: Auto Raça, Auto Raça V2, V3
+Satix.AutoRacaV2 = true
+Satix.AutoRacaV3 = true
+
+spawn(function()
+    while Satix.AutoRacaV2 do
+        ReplicatedStorage.Remotes.CommF_:InvokeServer("UnlockRaceV2")
+        task.wait(5)
+    end
+    while Satix.AutoRacaV3 do
+        ReplicatedStorage.Remotes.CommF_:InvokeServer("UnlockRaceV3")
+        task.wait(10)
+    end
+end)
+
+-- Parte 23: Auto Blox Fruits V2 (Habilidades e Espada)
+Satix.AutoBloxFruitV2 = true
+
+spawn(function()
+    while Satix.AutoBloxFruitV2 do
+        ReplicatedStorage.Remotes.CommF_:InvokeServer("ActivateFruitSkill")
+        task.wait(15)
+    end
+end)
+
+-- Parte 24: Auto PvP para Todos os Bosses (RipIndra, Katakuri)
+Satix.AutoPvPBosses = true
+
+spawn(function()
+    while Satix.AutoPvPBosses do
+        if workspace:FindFirstChild("RipIndra") then
+            teleportTo(workspace.RipIndra.HumanoidRootPart.CFrame)
+        end
+        if workspace:FindFirstChild("KatakuriV2") then
+            teleportTo(workspace.KatakuriV2.HumanoidRootPart.CFrame)
+        end
+        task.wait(10)
+    end
+end)
+
+-- Parte 25: Auto Loot (Itens Raros - CDK, Soul Guitar, God Human)
+Satix.AutoLootItens = true
+
+spawn(function()
+    while Satix.AutoLootItens do
+        for _, item in pairs(workspace:GetChildren()) do
+            if item:IsA("Model") and item.Name == "DevilFruit" then
+                teleportTo(item.CFrame)
+            end
+        end
+        task.wait(10)
+    end
+end)
+
+-- Parte 26: Auto Mastery e Farm de Fruta
+Satix.AutoFarmMasteryFruit = true
+
+spawn(function()
+    while Satix.AutoFarmMasteryFruit do
+        ReplicatedStorage.Remotes.CommF_:InvokeServer("FarmMasteryFruit")
+        task.wait(5)
+    end
+end)
+
+-- Parte 27: Auto Trials V4
+Satix.AutoTrialsV4 = true
+
+spawn(function()
+    while Satix.AutoTrialsV4 do
+        ReplicatedStorage.Remotes.CommF_:InvokeServer("StartTrialV4")
+        task.wait(15)
+    end
+end)
+
+-- Parte 28: Auto Enchant de Armas
+Satix.AutoEnchantArmas = true
+
+spawn(function()
+    while Satix.AutoEnchantArmas do
+        ReplicatedStorage.Remotes.CommF_:InvokeServer("EnchantWeapon")
+        task.wait(10)
+    end
+end)
+
+-- Parte 29: Auto Katakuri e Rip Indra
+Satix.AutoKatakuriRipIndra = true
+
+spawn(function()
+    while Satix.AutoKatakuriRipIndra do
+        if workspace:FindFirstChild("KatakuriV2") then
+            teleportTo(workspace.KatakuriV2.HumanoidRootPart.CFrame)
+        end
+        if workspace:FindFirstChild("RipIndra") then
+            teleportTo(workspace.RipIndra.HumanoidRootPart.CFrame)
+        end
+        task.wait(10)
+    end
+end)
+
+-- Parte 30: Auto Bounty Hunt e Coleta de Frutas
+Satix.AutoBountyHunt = true
+Satix.AutoCollectFruits = true
+
+spawn(function()
+    while Satix.AutoBountyHunt do
+        ReplicatedStorage.Remotes.CommF_:InvokeServer("StartBounty")
+        task.wait(20)
+    end
+    while Satix.AutoCollectFruits do
+        for _, fruit in pairs(workspace:GetChildren()) do
+            if fruit.Name == "Fruit" then
+                teleportTo(fruit.CFrame)
+            end
+        end
+        task.wait(10)
+    end
+end)
+
+-- Parte 31: Auto Sea Beast (caçar e teleportar para eventos)
+Satix.AutoSeaBeastHunt = true
+
+spawn(function()
+    while Satix.AutoSeaBeastHunt do
+        local seaBeast = workspace:FindFirstChild("SeaBeast")
+        if seaBeast then
+            teleportTo(seaBeast.HumanoidRootPart.CFrame)
+        end
+        task.wait(15)
+    end
+end)
+
+-- Parte 33: Auto Farm de Mobs (Vários Estilos)
+Satix.AutoFarmMobs = true
+Satix.FarmStyle = "Sword" -- "Sword", "Fruit", "Combat"
+
+spawn(function()
+    while Satix.AutoFarmMobs do
+        for _, mob in pairs(workspace.Mobs:GetChildren()) do
+            if mob:FindFirstChild("HumanoidRootPart") then
+                teleportTo(mob.HumanoidRootPart.CFrame)
+                if Satix.FarmStyle == "Sword" then
+                    useKey("Z")
+                elseif Satix.FarmStyle == "Fruit" then
+                    useKey("X")
+                elseif Satix.FarmStyle == "Combat" then
+                    useKey("C")
+                end
+            end
+        end
+        task.wait(5)
+    end
+end)
+
+-- Parte 34: Auto Sabre (Espada) para Combate
+Satix.AutoSabre = true
+
+spawn(function()
+    while Satix.AutoSabre do
+        local sabre = workspace:FindFirstChild("Sabre")
+        if sabre then
+            teleportTo(sabre.HumanoidRootPart.CFrame)
+            useKey("Z") -- Usar ataque com sabre
+        end
+        task.wait(10)
+    end
+end)
+
+-- Parte 35: Auto Raça (V1, V2, V3)
+Satix.AutoRacaV1 = true
+Satix.AutoRacaV2 = true
+Satix.AutoRacaV3 = true
+
+spawn(function()
+    while Satix.AutoRacaV1 do
+        ReplicatedStorage.Remotes.CommF_:InvokeServer("ActivateRaceV1")
+        task.wait(5)
+    end
+    while Satix.AutoRacaV2 do
+        ReplicatedStorage.Remotes.CommF_:InvokeServer("ActivateRaceV2")
+        task.wait(10)
+    end
+    while Satix.AutoRacaV3 do
+        ReplicatedStorage.Remotes.CommF_:InvokeServer("ActivateRaceV3")
+        task.wait(15)
+    end
+end)
+
+-- Parte 36: Auto Haki da Observação V1 e V2
+Satix.AutoKenHakiV1 = true
+Satix.AutoKenHakiV2 = true
+
+spawn(function()
+    while Satix.AutoKenHakiV1 do
+        ReplicatedStorage.Remotes.CommF_:InvokeServer("KenHakiV1")
+        task.wait(5)
+    end
+    while Satix.AutoKenHakiV2 do
+        ReplicatedStorage.Remotes.CommF_:InvokeServer("KenHakiV2")
+        task.wait(10)
+    end
+end)
+
+-- Parte 37: Auto Ativar V3 e V4 Haki (Buso)
+Satix.AutoBusoV3 = true
+Satix.AutoBusoV4 = true
+
+spawn(function()
+    while Satix.AutoBusoV3 do
+        ReplicatedStorage.Remotes.CommF_:InvokeServer("ActivateBusoV3")
+        task.wait(7)
+    end
+    while Satix.AutoBusoV4 do
+        ReplicatedStorage.Remotes.CommF_:InvokeServer("ActivateBusoV4")
+        task.wait(12)
+    end
+end)
+
+-- Parte 38: Auto Trials V3, V4 e V5
+Satix.AutoTrialsV3 = true
+Satix.AutoTrialsV4 = true
+Satix.AutoTrialsV5 = true
+
+spawn(function()
+    while Satix.AutoTrialsV3 do
+        ReplicatedStorage.Remotes.CommF_:InvokeServer("StartTrialV3")
+        task.wait(20)
+    end
+    while Satix.AutoTrialsV4 do
+        ReplicatedStorage.Remotes.CommF_:InvokeServer("StartTrialV4")
+        task.wait(25)
+    end
+    while Satix.AutoTrialsV5 do
+        ReplicatedStorage.Remotes.CommF_:InvokeServer("StartTrialV5")
+        task.wait(30)
+    end
+end)
+
+-- Parte 39: Auto Loot (Itens Raros e Armas)
+Satix.AutoLootRareItems = true
+Satix.AutoLootWeapons = true
+
+spawn(function()
+    while Satix.AutoLootRareItems do
+        for _, item in pairs(workspace:GetChildren()) do
+            if item:IsA("Model") and item.Name == "RareItem" then
+                teleportTo(item.CFrame)
+            end
+        end
+        task.wait(10)
+    end
+    while Satix.AutoLootWeapons do
+        for _, weapon in pairs(workspace:GetChildren()) do
+            if weapon:IsA("Model") and weapon.Name == "Weapon" then
+                teleportTo(weapon.CFrame)
+            end
+        end
+        task.wait(15)
+    end
+end)
+
+-- Parte 40: Auto Collect Bones, Eggs and Other Items
+Satix.AutoCollectBones = true
+Satix.AutoCollectEggs = true
+
+spawn(function()
+    while Satix.AutoCollectBones do
+        local bones = workspace:FindFirstChild("Bones")
+        if bones then
+            teleportTo(bones.CFrame)
+        end
+        task.wait(10)
+    end
+    while Satix.AutoCollectEggs do
+        local eggs = workspace:FindFirstChild("Egg")
+        if eggs then
+            teleportTo(eggs.CFrame)
+        end
+        task.wait(10)
+    end
+end)
+
+-- Parte 41: Auto Coletar Fruits e Itens Raros
+Satix.AutoCollectFruits = true
+Satix.AutoCollectGodHuman = true
+
+spawn(function()
+    while Satix.AutoCollectFruits do
+        for _, fruit in pairs(workspace:GetChildren()) do
+            if fruit:IsA("Model") and fruit.Name == "DevilFruit" then
+                teleportTo(fruit.CFrame)
+            end
+        end
+        task.wait(10)
+    end
+    while Satix.AutoCollectGodHuman do
+        local godHuman = workspace:FindFirstChild("GodHuman")
+        if godHuman then
+            teleportTo(godHuman.CFrame)
+        end
+        task.wait(10)
+    end
+end)
+
+-- Parte 42: Auto Matar Rip Indra e Katakuri
+Satix.AutoRipIndra = true
+Satix.AutoKatakuri = true
+
+spawn(function()
+    while Satix.AutoRipIndra do
+        local ripIndra = workspace:FindFirstChild("RipIndra")
+        if ripIndra then
+            teleportTo(ripIndra.HumanoidRootPart.CFrame)
+        end
+        task.wait(15)
+    end
+    while Satix.AutoKatakuri do
+        local katakuri = workspace:FindFirstChild("KatakuriV2")
+        if katakuri then
+            teleportTo(katakuri.HumanoidRootPart.CFrame)
+        end
+        task.wait(20)
+    end
+end)
+
+-- Parte 43: Auto Deixar Mobs Morrem com Estilo de Combate
+Satix.AutoMobsDeath = true
+
+spawn(function()
+    while Satix.AutoMobsDeath do
+        for _, mob in pairs(workspace.Mobs:GetChildren()) do
+            if mob:FindFirstChild("HumanoidRootPart") then
+                teleportTo(mob.HumanoidRootPart.CFrame)
+                useKey("C") -- Estilo de Luta (Exemplo)
+            end
+        end
+        task.wait(5)
+    end
+end)
+
+-- Parte 44: Auto Fishing Quest (Pesca)
+Satix.AutoFishingQuest = true
+
+spawn(function()
+    while Satix.AutoFishingQuest do
+        ReplicatedStorage.Remotes.CommF_:InvokeServer("StartFishingQuest")
+        task.wait(30)
+    end
+end)
+
+-- Parte 45: Auto Dragon Talon V2
+Satix.AutoDragonTalonV2 = true
+
+spawn(function()
+    while Satix.AutoDragonTalonV2 do
+        ReplicatedStorage.Remotes.CommF_:InvokeServer("StartDragonTalonV2")
+        task.wait(20)
+    end
+end)
+
+-- Parte 46: Auto Craft Dino Rod (Crafting)
+Satix.AutoCraftDinoRod = true
+
+spawn(function()
+    while Satix.AutoCraftDinoRod do
+        ReplicatedStorage.Remotes.CommF_:InvokeServer("CraftDinoRod")
+        task.wait(30)
+    end
+end)
+
+-- Parte 47: Auto Pirate Raid e Factory Raid
+Satix.AutoPirateRaid = true
+Satix.AutoFactoryRaid = true
+
+spawn(function()
+    while Satix.AutoPirateRaid do
+        ReplicatedStorage.Remotes.CommF_:InvokeServer("StartPirateRaid")
+        task.wait(30)
+    end
+    while Satix.AutoFactoryRaid do
+        ReplicatedStorage.Remotes.CommF_:InvokeServer("StartFactoryRaid")
+        task.wait(40)
+    end
+end)
+
+-- Parte 48: Auto Event do Mar (Sea Beast)
+Satix.AutoSeaBeastEvent = true
+
+spawn(function()
+    while Satix.AutoSeaBeastEvent do
+        local seaBeast = workspace:FindFirstChild("SeaBeast")
+        if seaBeast then
+            teleportTo(seaBeast.HumanoidRootPart.CFrame)
+        end
+        task.wait(15)
+    end
+end)
+
+-- Parte 49: Auto Coleta de Materiais (Items)
+Satix.AutoCollectMaterials = true
+
+spawn(function()
+    while Satix.AutoCollectMaterials do
+        for _, material in pairs(workspace:GetChildren()) do
+            if material:IsA("Model") and material.Name == "Material" then
+                teleportTo(material.CFrame)
+            end
+        end
+        task.wait(10)
+    end
+end)
+
+-- Parte 50: Auto Haki do Busoshoku (V1 e V2)
+Satix.AutoBusoshokuHakiV1 = true
+Satix.AutoBusoshokuHakiV2 = true
+
+spawn(function()
+    while Satix.AutoBusoshokuHakiV1 do
+        ReplicatedStorage.Remotes.CommF_:InvokeServer("ActivateBusoshokuHakiV1")
+        task.wait(7)
+    end
+    while Satix.AutoBusoshokuHakiV2 do
+        ReplicatedStorage.Remotes.CommF_:InvokeServer("ActivateBusoshokuHakiV2")
+        task.wait(12)
+    end
 end)
-
--- Auto Sistema de Tempos
-createButton("Controle de Tempo", UDim2.new(0, 10, 0, 11360), function()
-    SistemaTemporizador()
-end)
-
--- Auto Backup Configs
-createButton("Backup Configs", UDim2.new(0, 10, 0, 11420), function()
-    BackuparConfiguracoes()
-end)
-
--- Auto Sincronizar Servidor
-createButton("Sync Servidor", UDim2.new(0, 10, 0, 11480), function()
-    SincronizarComServidor()
-end)
-
--- Auto Screenshot
-createButton("Screenshot UI", UDim2.new(0, 10, 0, 11540), function()
-    TirarScreenshot()
-end)
-
--- Auto Corrigir Bugs
-createButton("Corrigir Bugs", UDim2.new(0, 10, 0, 11600), function()
-    CorrigirBugsGerais()
-end)
-
--- Auto Verificador Atualizações
-createButton("Verificar Update", UDim2.new(0, 10, 0, 11660), function()
-    VerificarAtualizacoes()
-end)
-
--- Auto Fixar Frame
-createButton("Fixar Frame", UDim2.new(0, 10, 0, 11720), function()
-    FixarFrameUI()
-end)
-
--- Auto Nomes Coloridos
-createButton("Nomes Coloridos", UDim2.new(0, 10, 0, 11780), function()
-    AtivarNomesColoridos()
-end)
-
--- Auto Musica Lobby
-createButton("Música Lobby", UDim2.new(0, 10, 0, 11840), function()
-    TocarMusicaLobby()
-end)
-
--- Auto Reconectar
-createButton("Auto Reconectar", UDim2.new(0, 10, 0, 11900), function()
-    AutoReconectar()
-end)
-
--- Auto Créditos Equipe
-createButton("Ver Créditos", UDim2.new(0, 10, 0, 11960), function()
-    MostrarCreditosEquipe()
-end)
-
--- Auto Compatibilidade KRNL
-createButton("Fix KRNL", UDim2.new(0, 10, 0, 12020), function()
-    CorrigirParaKRNL()
-end)
-createButton("Auto Trial v2", UDim2.new(0, 10, 0, 2700), function()
-    print("Auto Trial v2 Ativado!")
-end)
-
-createButton("Auto Trial v3", UDim2.new(0, 10, 0, 2760), function()
-    print("Auto Trial v3 Ativado!")
-end)
-
-createButton("Auto V4 Awaken", UDim2.new(0, 10, 0, 2820), function()
-    print("Auto V4 Awaken Ativado!")
-end)
-
-createButton("Auto Train Observation", UDim2.new(0, 10, 0, 2880), function()
-    print("Auto Train Observation Ativado!")
-end)
-
-createButton("Auto Train Armament", UDim2.new(0, 10, 0, 2940), function()
-    print("Auto Train Armament Ativado!")
-end)
-
-createButton("Auto Saber Quest", UDim2.new(0, 10, 0, 3000), function()
-    print("Auto Saber Quest Ativado!")
-end)
-
-createButton("Auto Elite Boss", UDim2.new(0, 10, 0, 3060), function()
-    print("Auto Elite Boss Ativado!")
-end)
-
-createButton("Auto Tushita", UDim2.new(0, 10, 0, 3120), function()
-    print("Auto Tushita Ativado!")
-end)
-
-createButton("Auto Yama", UDim2.new(0, 10, 0, 3180), function()
-    print("Auto Yama Ativado!")
-end)
-
-createButton("Auto Holy Torch", UDim2.new(0, 10, 0, 3240), function()
-    print("Auto Holy Torch Ativado!")
-end)
-
-createButton("Auto God Human", UDim2.new(0, 10, 0, 3300), function()
-    print("Auto God Human Ativado!")
-end)
-
-createButton("Auto Dragon Talon V2", UDim2.new(0, 10, 0, 3360), function()
-    print("Auto Dragon Talon V2 Ativado!")
-end)
-
-createButton("Auto Craft Dino Rood", UDim2.new(0, 10, 0, 3420), function()
-    print("Auto Craft Dino Rood Ativado!")
-end)
-
-createButton("Auto Buy Haki", UDim2.new(0, 10, 0, 3480), function()
-    print("Auto Buy Haki Ativado!")
-end)
-
-createButton("Auto Train Race", UDim2.new(0, 10, 0, 3540), function()
-    print("Auto Train Race Ativado!")
-end)
-
-createButton("Auto Upgrade Sword", UDim2.new(0, 10, 0, 3600), function()
-    print("Auto Upgrade Sword Ativado!")
-end)
-
-createButton("Auto Unlock Portals", UDim2.new(0, 10, 0, 3660), function()
-    print("Auto Unlock Portals Ativado!")
-end)
-
-createButton("Auto Collect Hallow Essence", UDim2.new(0, 10, 0, 3720), function()
-    print("Auto Collect Hallow Essence Ativado!")
-end)
-
-createButton("Auto Sea Beast Kill", UDim2.new(0, 10, 0, 3780), function()
-    print("Auto Sea Beast Kill Ativado!")
-end)
-
-createButton("Auto Kill Leviathan", UDim2.new(0, 10, 0, 3840), function()
-    print("Auto Kill Leviathan Ativado!")
-end)
-
-createButton("Auto Arena PVP", UDim2.new(0, 10, 0, 3900), function()
-    print("Auto Arena PVP Ativado!")
-end)
-
-createButton("Auto Equip Best Gear", UDim2.new(0, 10, 0, 3960), function()
-    print("Auto Equip Best Gear Ativado!")
-end)
-
-createButton("Auto Observation V2", UDim2.new(0, 10, 0, 4020), function()
-    print("Auto Observation V2 Ativado!")
-end)
-
-createButton("Auto Bounty Hunt", UDim2.new(0, 10, 0, 4080), function()
-    print("Auto Bounty Hunt Ativado!")
-end)
-
-createButton("Auto God Chalice Hunt", UDim2.new(0, 10, 0, 4140), function()
-    print("Auto God Chalice Hunt Ativado!")
-end)
-
-createButton("Auto Use Portal", UDim2.new(0, 10, 0, 4200), function()
-    print("Auto Use Portal Ativado!")
-end)
-
-createButton("Auto Search Chests", UDim2.new(0, 10, 0, 4260), function()
-    print("Auto Search Chests Ativado!")
-end)
-
-createButton("Auto Collect Flowers", UDim2.new(0, 10, 0, 4320), function()
-    print("Auto Collect Flowers Ativado!")
-end)
-
-createButton("Auto Kill Hydra", UDim2.new(0, 10, 0, 4380), function()
-    print("Auto Kill Hydra Ativado!")
-end)
-
-createButton("Auto Trial Timer Skip", UDim2.new(0, 10, 0, 4440), function()
-    print("Auto Trial Timer Skip Ativado!")
-end)
-
-createButton("Auto Toggler Sniper", UDim2.new(0, 10, 0, 4500), function()
-    print("Auto Toggler Sniper Ativado!")
-end)
-
-createButton("Auto Spawn Boat", UDim2.new(0, 10, 0, 4560), function()
-    print("Auto Spawn Boat Ativado!")
-end)
-
-createButton("Auto Boat Kill", UDim2.new(0, 10, 0, 4620), function()
-    print("Auto Boat Kill Ativado!")
-end)
-
-createButton("Auto Factory Raid", UDim2.new(0, 10, 0, 4680), function()
-    print("Auto Factory Raid Ativado!")
-end)
-
-createButton("Auto Kill NPC (All Maps)", UDim2.new(0, 10, 0, 4740), function()
-    print("Auto Kill NPC (All Maps) Ativado!")
-end)
-
-createButton("Auto Awakening Fruit", UDim2.new(0, 10, 0, 4800), function()
-    print("Auto Awak
