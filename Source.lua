@@ -101,6 +101,39 @@ for _, tabName in ipairs(TabList) do
     Tabs[tabName] = Button
     PagesTable[tabName] = Content
 end
+getgenv().Satix_AutoFarm = false
+getgenv().Satix_AutoQuest = true
+getgenv().Satix_AutoEquipBest = true
+getgenv().Satix_AutoHakiFarm = true
+getgenv().Satix_MasteryMode = "Sword"
+getgenv().AutoClick = true
+
+spawn(function()
+    while getgenv().AutoClick do
+        task.wait(0.001)
+        pcall(function()
+            local vim = game:GetService("VirtualInputManager")
+            vim:SendMouseButtonEvent(0, 0, 0, true, game, 0)
+            vim:SendMouseButtonEvent(0, 0, 0, false, game, 0)
+        end)
+    end
+end)
+getgenv().AutoHaki = true
+
+spawn(function()
+    while getgenv().AutoHaki do
+        wait(1)
+        local plr = game.Players.LocalPlayer
+        if not plr.Character:FindFirstChild("HasBuso") then
+            game:GetService("VirtualInputManager"):SendKeyEvent(true, "J", false, game)
+        end
+        if not plr.PlayerGui:FindFirstChild("ImageLabel") then
+            game:GetService("ReplicatedStorage").Remotes.Comm:InvokeServer("KenTalk", "Buy")
+            game:GetService("ReplicatedStorage").Remotes.Comm:InvokeServer("KenTalk", "Enable")
+        end
+    end
+end)
+
 -- Satix Hub v2 - Interface Principal e Sistema de Abas (Atualizado)
 -- Suporte total para executores mobile e PC: Hydrogen, KRNL, Fluxus, Delta, Codex, etc
 
@@ -747,3 +780,293 @@ elseif World2 then
         end
     end
 end
+FarmTab:NewToggle("Auto Farm", "Ativa o farm de mobs e quest", function(state)
+    getgenv().Satix_AutoFarm = state
+end)
+
+FarmTab:NewToggle("Auto Quest", "Pega missão automaticamente", function(state)
+    getgenv().Satix_AutoQuest = state
+end)
+
+FarmTab:NewToggle("Auto Equip Melhor Arma", "Equipa automaticamente o melhor item", function(state)
+    getgenv().Satix_AutoEquipBest = state
+end)
+
+FarmTab:NewToggle("Auto Haki", "Ativa Haki de armamento e observação", function(state)
+    getgenv().Satix_AutoHakiFarm = state
+end)
+
+FarmTab:NewDropdown("Modo de Farm", "Escolha como quer atacar os mobs", {"Sword", "Fruit", "Combat"}, function(option)
+    getgenv().Satix_MasteryMode = option
+end)
+    getgenv().Satix_AutoTrialV4 = false
+
+spawn(function()
+    while getgenv().Satix_AutoTrialV4 do
+        wait(2)
+        local altar = workspace:FindFirstChild("Altar")
+        if altar then
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = altar.CFrame + Vector3.new(0, 3, 0)
+        end
+    end
+end)
+    getgenv().Satix_AutoPullLever = false
+
+spawn(function()
+    while getgenv().Satix_AutoPullLever do
+        wait(2)
+        local lever = workspace:FindFirstChild("Lever")
+        if lever and lever:FindFirstChild("ClickDetector") then
+            fireclickdetector(lever.ClickDetector)
+        end
+    end
+end)
+    getgenv().Satix_AutoTotem = false
+
+spawn(function()
+    while getgenv().Satix_AutoTotem do
+        wait(2)
+        local totem = workspace:FindFirstChild("Totem")
+        if totem then
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = totem.CFrame + Vector3.new(0, 5, 0)
+        end
+    end
+end)
+    getgenv().Satix_AutoEnchant = false
+
+spawn(function()
+    while getgenv().Satix_AutoEnchant do
+        wait(3)
+        pcall(function()
+            game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("ColorsDealer", "2")
+        end)
+    end
+end)
+    getgenv().Satix_AutoObservation = false
+
+spawn(function()
+    while getgenv().Satix_AutoObservation do
+        wait(2)
+        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("KenTalk", "Buy")
+        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("KenTalk", "Enable")
+    end
+end)getgenv().Satix_AutoDinoRod = false
+
+spawn(function()
+    while getgenv().Satix_AutoDinoRod do
+        wait(3)
+        pcall(function()
+            game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("DinoHunter", "Craft")
+        end)
+    end
+end)
+    getgenv().Satix_AutoRaceV3 = false
+
+spawn(function()
+    while getgenv().Satix_AutoRaceV3 do
+        wait(5)
+        pcall(function()
+            game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("Awakener", "Awaken")
+        end)
+    end
+end)
+    getgenv().Satix_AutoSaber = false
+
+spawn(function()
+    while getgenv().Satix_AutoSaber do
+        wait(3)
+        pcall(function()
+            game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SaberQuestProgress")
+        end)
+    end
+end)
+    getgenv().Satix_AutoTushita = false
+
+spawn(function()
+    while getgenv().Satix_AutoTushita do
+        wait(3)
+        local boss = workspace.Enemies:FindFirstChild("Longma")
+        if boss then
+            repeat
+                wait()
+                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = boss.HumanoidRootPart.CFrame * CFrame.new(0, 20, 0)
+            until not boss or boss.Humanoid.Health <= 0 or not getgenv().Satix_AutoTushita
+        end
+    end
+end)
+    getgenv().Satix_AutoYama = false
+
+spawn(function()
+    while getgenv().Satix_AutoYama do
+        wait(1)
+        for _, enemy in pairs(workspace.Enemies:GetChildren()) do
+            if enemy:FindFirstChild("HumanoidRootPart") then
+                repeat wait()
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = enemy.HumanoidRootPart.CFrame * CFrame.new(0, 20, 0)
+                until not enemy or enemy.Humanoid.Health <= 0 or not getgenv().Satix_AutoYama
+            end
+        end
+    end
+end)
+    getgenv().Satix_AutoHolyTorch = false
+
+spawn(function()
+    while getgenv().Satix_AutoHolyTorch do
+        wait(2)
+        local torch = workspace:FindFirstChild("Holy Torch")
+        if torch and torch:FindFirstChild("TouchInterest") then
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = torch.CFrame + Vector3.new(0, 3, 0)
+        end
+    end
+end)
+    getgenv().Satix_AutoTrialCDK = false
+
+spawn(function()
+    while getgenv().Satix_AutoTrialCDK do
+        wait(3)
+        local portal = workspace:FindFirstChild("CursedPortal")
+        if portal then
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = portal.CFrame + Vector3.new(0, 5, 0)
+        end
+    end
+end)
+    getgenv().Satix_AutoSoulGuitar = false
+
+spawn(function()
+    while getgenv().Satix_AutoSoulGuitar do
+        wait(5)
+        pcall(function()
+            game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SoulGuitarCraft", true)
+        end)
+    end
+end)
+    -- FARM
+FarmTab:NewToggle("Auto Farm", "Farm completo com missão", function(v)
+    getgenv().Satix_AutoFarm = v
+end)
+
+FarmTab:NewToggle("Auto Quest", "Pega missão automaticamente", function(v)
+    getgenv().Satix_AutoQuest = v
+end)
+
+FarmTab:NewToggle("Auto Haki", "Ativa Haki durante o farm", function(v)
+    getgenv().Satix_AutoHakiFarm = v
+end)
+
+FarmTab:NewToggle("Auto Equip Melhor Arma", "Equipa melhor item que tiver", function(v)
+    getgenv().Satix_AutoEquipBest = v
+end)
+
+FarmTab:NewDropdown("Modo de Farm", "Escolha o estilo de combate", {"Sword", "Fruit", "Combat"}, function(v)
+    getgenv().Satix_MasteryMode = v
+end)
+
+-- BOSSES
+BossTab:NewToggle("Auto Indra", "Invoca e derrota rip_indra", function(v)
+    getgenv().Satix_AutoIndra = v
+end)
+
+BossTab:NewToggle("Auto Katakuri", "Farma o Cake Prince", function(v)
+    getgenv().Satix_AutoKatakuri = v
+end)
+
+BossTab:NewToggle("Auto Order", "Inicia e derrota Order", function(v)
+    getgenv().Satix_AutoOrder = v
+end)
+
+BossTab:NewToggle("Auto Factory", "Farma o boss da Fábrica", function(v)
+    getgenv().Satix_AutoFactory = v
+end)
+
+-- EVENTOS
+EventoTab:NewToggle("Auto Farm Bone", "Farma mobs de evento", function(v)
+    getgenv().Satix_AutoBone = v
+end)
+
+EventoTab:NewToggle("Auto Sea Beast", "Farma Sea Beast", function(v)
+    getgenv().Satix_AutoSeaBeast = v
+end)
+
+EventoTab:NewToggle("Auto Fruit Sniper", "Teleporta até frutas no chão", function(v)
+    getgenv().Satix_AutoFruitSniper = v
+end)
+
+EventoTab:NewToggle("Auto Coletar Flowers", "Coleta as 3 flores para V2", function(v)
+    getgenv().Satix_AutoFlower = v
+end)
+
+-- TRIALS
+TrialTab:NewToggle("Auto Trial V4", "Teleporta para o altar V4", function(v)
+    getgenv().Satix_AutoTrialV4 = v
+end)
+
+TrialTab:NewToggle("Auto Pull Lever", "Puxa a alavanca automaticamente", function(v)
+    getgenv().Satix_AutoPullLever = v
+end)
+
+-- RAÇAS
+RaçaTab:NewToggle("Auto Raça V3", "Ativa raça V3", function(v)
+    getgenv().Satix_AutoRaceV3 = v
+end)
+
+RaçaTab:NewToggle("Auto Observation V2", "Farma esquivas", function(v)
+    getgenv().Satix_AutoObservation = v
+end)
+
+-- ITENS E CRAFT
+ItensTab:NewToggle("Auto Saber", "Progresso automático da Saber", function(v)
+    getgenv().Satix_AutoSaber = v
+end)
+
+ItensTab:NewToggle("Auto Tushita", "Farma o Longma", function(v)
+    getgenv().Satix_AutoTushita = v
+end)
+
+ItensTab:NewToggle("Auto Yama", "Farma para obter Yama", function(v)
+    getgenv().Satix_AutoYama = v
+end)
+
+ItensTab:NewToggle("Auto Holy Torch", "Coleta Holy Torch", function(v)
+    getgenv().Satix_AutoHolyTorch = v
+end)
+
+ItensTab:NewToggle("Auto Trial CDK", "Teleporta para CDK", function(v)
+    getgenv().Satix_AutoTrialCDK = v
+end)
+
+ItensTab:NewToggle("Auto Craft Soul Guitar", "Crafta Soul Guitar", function(v)
+    getgenv().Satix_AutoSoulGuitar = v
+end)
+
+ItensTab:NewToggle("Auto Totem CDK", "Ativa o totem do CDK", function(v)
+    getgenv().Satix_AutoTotem = v
+end)
+
+ItensTab:NewToggle("Auto Enchant", "Encanta itens com haki colorido", function(v)
+    getgenv().Satix_AutoEnchant = v
+end)
+
+ItensTab:NewToggle("Auto Craft Dino Rod", "Crafta Dino Rod", function(v)
+    getgenv().Satix_AutoDinoRod = v
+end)
+
+-- EXTRAS
+ExtrasTab:NewToggle("Auto Haki Loop", "Mantém o Haki ativado", function(v)
+    getgenv().Satix_AutoHaki = v
+end)
+
+ExtrasTab:NewToggle("Auto Skill Spam", "Spamma Z X C V", function(v)
+    getgenv().Satix_AutoSkill = v
+end)
+
+ExtrasTab:NewToggle("Auto Click", "Clique automático ultra rápido", function(v)
+    getgenv().Satix_AutoClick = v
+end)
+
+ExtrasTab:NewToggle("No Fog", "Remove a neblina do jogo", function(v)
+    getgenv().Satix_NoFog = v
+end)
+
+ExtrasTab:NewToggle("Anti-AFK", "Evita desconexão por inatividade", function(v)
+    getgenv().Satix_AntiAFK = v
+        end)
