@@ -198,7 +198,7 @@ end)
 function CheckQuest() 
     MyLevel = game:GetService("Players").LocalPlayer.Data.Level.Value
     if World1 then
-        if MyLevel == 1 or MyLevel <= 9 then
+         if MyLevel == 1 or MyLevel <= 9 then
             Mon = "Bandit"
             LevelQuest = 1
             NameQuest = "BanditQuest1"
